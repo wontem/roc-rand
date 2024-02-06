@@ -4,8 +4,9 @@ interface XorShift32 exposes [
         u32,
         seed,
     ] imports [
-        Generator.{ embed, Generator, andThen, return },
+        Generator.{ embed, Generator },
         RngCore.{ RngCore },
+        Impls.{ u64viau32 },
     ]
 
 XorShift32 := U32
@@ -27,11 +28,4 @@ u32 = embed \@XorShift32 state ->
     |> \s -> Num.bitwiseXor s (Num.shiftLeftBy s 5)
     |> \s -> (@XorShift32 s, s)
 
-u64 =
-    x <- u32 |> andThen
-    y <- u32 |> andThen
-
-    (Num.toU64 x)
-    |> Num.shiftLeftBy 32
-    |> Num.bitwiseOr (Num.toU64 y)
-    |> return
+u64 = u64viau32
